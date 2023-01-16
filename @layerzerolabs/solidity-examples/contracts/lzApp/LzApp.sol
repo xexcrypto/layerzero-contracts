@@ -14,7 +14,7 @@ import "../util/BytesLib.sol";
 abstract contract LzApp is Ownable, ILayerZeroReceiver, ILayerZeroUserApplicationConfig {
     using BytesLib for bytes;
 
-    ILayerZeroEndpoint public immutable lzEndpoint;
+    ILayerZeroEndpoint public lzEndpoint;
     mapping(uint16 => bytes) public trustedRemoteLookup;
     mapping(uint16 => mapping(uint16 => uint)) public minDstGasLookup;
     address public precrime;
@@ -25,6 +25,11 @@ abstract contract LzApp is Ownable, ILayerZeroReceiver, ILayerZeroUserApplicatio
     event SetMinDstGas(uint16 _dstChainId, uint16 _type, uint _minDstGas);
 
     constructor(address _endpoint) {
+        lzEndpoint = ILayerZeroEndpoint(_endpoint);
+    }
+
+    function setEndpoint(address _endpoint) external onlyOwner {
+        require( address(lzEndpoint) == address(0));
         lzEndpoint = ILayerZeroEndpoint(_endpoint);
     }
 
